@@ -1,0 +1,20 @@
+template header
+objectType
+when_rule
+then_rule
+
+package com.test;
+
+dialect "mvel"
+
+template "ageRule"
+
+rule "ageRule_@{row.rowNumber}"
+    when
+        $person :  @{objectType}(@{when_rule})
+    then
+     $person.setStatus(@{then_rule});
+end
+end template
+
+ 
