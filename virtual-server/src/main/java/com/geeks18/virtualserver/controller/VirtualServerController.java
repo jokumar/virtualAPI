@@ -2,10 +2,10 @@ package com.geeks18.virtualserver.controller;
 
 import javax.annotation.Resource;
 
-import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.geeks18.virtualserver.drools.DroolsConfiguration;
@@ -18,15 +18,14 @@ public class VirtualServerController {
 	@Resource 
 	DroolsConfiguration droolsConfiguration;
 	  
-	  @GetMapping(value="/calculateFare") 
-	  public @ResponseBody Long  calculateFare(){ 
-		  OrderRuleModel model=new OrderRuleModel();
-		  model.setOrderId(10);
+	  @PostMapping(value="/calculateFare") 
+	  public @ResponseBody OrderRuleModel  calculateFare(@RequestBody OrderRuleModel ordermodel){ 
+		  
 		  KieSession kieSession = droolsConfiguration.getKieContainer().newKieSession();
-		  kieSession.insert(model);
+		  kieSession.insert(ordermodel);
 		  kieSession.fireAllRules();
-		  System.out.println("--->"+model.getStatus());
-	  return new Long(1);
+		  System.out.println("--->"+ordermodel.getStatus());
+	  return ordermodel;
 	  }
 	 
 }

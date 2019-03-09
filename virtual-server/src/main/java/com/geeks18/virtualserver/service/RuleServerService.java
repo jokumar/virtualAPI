@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.geeks18.virtualserver.db.RuleRepository;
@@ -40,10 +41,24 @@ public class RuleServerService {
 		return true;
 	}
 	
+	public List<MainRuleDTO>  getAllRules() {
+		List<MainRuleDTO> list=new ArrayList<>();
+		ruleRepository.findAll().forEach(x->{
+			MainRuleDTO mainRuleDto =new MainRuleDTO();
+				mainRuleDto.setRuleName(x.getRuleName());
+				mainRuleDto.setRuleId(x.getRuleId());
+				mainRuleDto.setWhenRule(x.getWhenRule());
+				mainRuleDto.setThenRule(x.getThenRule());
+				mainRuleDto.setRuleTemplate(x.getRuleTemplate());
+				list.add(mainRuleDto);
+		});
+		return list;
+	}
 	public List<MainRuleDTO>  getAllRulesByTemplate(String template) {
 		List<MainRuleDTO> list=new ArrayList<>();
 		ruleRepository.findAll().forEach(x->{
 			MainRuleDTO mainRuleDto =new MainRuleDTO();
+			
 			if(template.equalsIgnoreCase(x.getRuleTemplate())){
 				mainRuleDto.setRuleName(x.getRuleName());
 				mainRuleDto.setRuleId(x.getRuleId());

@@ -1,11 +1,16 @@
 package com.geeks18.virtualserver.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kie.api.runtime.KieContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +56,15 @@ public class RulesServerController {
 		 droolsConfiguration.refreshKieContainer();
 		 droolsConfiguration.getKieContainer();
 		 return true;
+	}
+	@GetMapping(value = "/getAllRule", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<MainRuleDTO>  getAllRule(@PathVariable String template) {
+		if(StringUtils.isEmpty(template)){
+			return ruleServerService.getAllRulesByTemplate(template);
+		}else{
+			return ruleServerService.getAllRules();
+		}
+		
 	}
 
 

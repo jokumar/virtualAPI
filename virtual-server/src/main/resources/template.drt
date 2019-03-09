@@ -2,18 +2,16 @@ template header
 objectType
 when_rule
 then_rule
+rule_name
 
-package com.test;
-
-dialect "mvel"
 
 template "ageRule"
 
-rule "ageRule_@{row.rowNumber}"
+rule "ageRule_@{rule_name}"
     when
-        $person :  @{objectType}(@{when_rule})
+        $x :  @{objectType}(@{when_rule})
     then
-     $person.setStatus(@{then_rule});
+     @{then_rule};
 end
 end template
 
