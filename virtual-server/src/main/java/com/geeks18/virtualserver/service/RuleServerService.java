@@ -18,6 +18,13 @@ public class RuleServerService {
 	@Resource
 	RuleRepository ruleRepository;
 
+	public Boolean createRules(List<MainRuleDTO> mainRuleDtoList) {
+		mainRuleDtoList.forEach(x->{
+			createRule(x);
+		});
+		return true;
+	}
+
 	
 	public Boolean createRule(MainRuleDTO mainRuleDto) {
 		MainRuleModel mainRuleModel = new MainRuleModel();
