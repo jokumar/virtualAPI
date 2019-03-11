@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.geeks18.virtualserver.controller.util.DynamicBeanObjectUtil;
 import com.geeks18.virtualserver.drools.DroolsConfiguration;
+import com.geeks18.virtualserver.drools.model.GenericRuleModel;
 import com.geeks18.virtualserver.rule.dto.MainRuleDTO;
 import com.geeks18.virtualserver.service.RuleServerService;
 
@@ -38,7 +40,7 @@ public class RulesServerController   {
 	public @ResponseBody Boolean createRule(@RequestBody MainRuleDTO mainRuleDto) {
 		 ruleServerService.createRule(mainRuleDto);
 		 droolsConfiguration.refreshKieContainer();
-		 droolsConfiguration.getKieContainer();
+		// droolsConfiguration.getKieContainer();
 		 return true;
 	}
 	
@@ -46,16 +48,15 @@ public class RulesServerController   {
 	public @ResponseBody Boolean createRule(@RequestBody List<MainRuleDTO> list) {
 		 ruleServerService.createRules(list);
 		 droolsConfiguration.refreshKieContainer();
-		 droolsConfiguration.getKieContainer();
+		// droolsConfiguration.getKieContainer();
 		 return true;
 	}
 
 	@PostMapping(value = "/updateRule", produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody Boolean updateRule(@RequestBody MainRuleDTO mainRuleDto) {
-		
-		 ruleServerService.updateRule(mainRuleDto);
+		 ruleServerService.createOrUpdate(mainRuleDto);
 		 droolsConfiguration.refreshKieContainer();
-		 droolsConfiguration.getKieContainer();
+		// droolsConfiguration.getKieContainer(iClass);
 		 return true;
 	}
 	@GetMapping(value = "/getAllRule/{template}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,6 +68,13 @@ public class RulesServerController   {
 		}
 		
 	}
+	
 
+	@GetMapping(value = "/deleteAll", produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Boolean  deleteAllRules() {
+			return ruleServerService.deleteAllRules();
+		
+	}
+	
 
 }
