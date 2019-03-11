@@ -2,23 +2,16 @@ package com.geeks18.virtualserver.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.StandardLocation;
-import javax.tools.ToolProvider;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -33,6 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.geeks18.virtualserver.drools.model.GenericPojoModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @RestController
 @RequestMapping("/virtualServer/model")
@@ -57,9 +54,10 @@ public class ModelGeneratorController {
 		Workbook workbook = WorkbookFactory.create(new File(path));
 
 		Sheet sheet = workbook.getSheetAt(0);
-		Set<String> attributeList = new HashSet<>();
-		getAttributes(sheet, attributeList);
-		//createJavaBeans(attributeList, sheet.getSheetName());
+		List<String> attributeList = new ArrayList<>();
+		List<String> headerList = new ArrayList<>();
+		getAttributes(sheet, attributeList,headerList);
+		populateObject(attributeList,headerList);
 
 		workbook.close();
 
@@ -67,18 +65,42 @@ public class ModelGeneratorController {
 
 
 
-	private void getAttributes(Sheet sheet, Set<String> attributeList) {
+	private void populateObject(List<String> attributeList, List<String> headerList) {
+		List<GenericPojoModel> gPMList = new ArrayList<GenericPojoModel>();
+		
+		String[] headerArray = headerList.toArray(new String[headerList.size()]);
+
+		for(int i = 0 ; i<attributeList.size(); i ++) {
+			GenericPojoModel gpm = new GenericPojoModel();
+			gpm.setValue(attributeList.get(i));
+			if(headerArray.length>i) {
+				gpm.setKey(headerArray[i]);
+			}else {
+				gpm.setKey(headerArray[(i%headerArray.length)]);
+			}
+			gPMList.add(gpm);
+		}
+	
+		Gson gsonBuilder = new GsonBuilder().create();
+		String jsonFromJavaArrayList = gsonBuilder.toJson(gPMList);
+		System.out.println(jsonFromJavaArrayList);
+	}
+
+	private void getAttributes(Sheet sheet, List<String> attributeList,List<String> headerList) {
 		DataFormatter dataFormatter = new DataFormatter();
 		for (Row row : sheet) {
 			for (Cell cell : row) {
 				String cellValue = dataFormatter.formatCellValue(cell);
-				if (row.getRowNum() == 1) {
-					attributeList.add(cellValue);
-				}
-
-				System.out.print(cellValue + "\t");
+				if(cell.getRowIndex()==0) {
+					headerList.add(cellValue);
+				}else {
+					attributeList.add(cellValue);					
+				}				
 			}
+
 		}
+		System.out.println(attributeList);
+		System.out.println(headerList);
 	}
 
 	private void saveFile(InputStream stream, String path) throws IOException {
