@@ -2,28 +2,23 @@ package com.geeks18.virtualserver.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
 import java.util.Arrays;
->>>>>>> 13a3070fcfa50ff237dcc0c69bc8c3b6fbc1a84d
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-<<<<<<< HEAD
-=======
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
->>>>>>> 13a3070fcfa50ff237dcc0c69bc8c3b6fbc1a84d
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
@@ -40,16 +35,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-<<<<<<< HEAD
+import com.geeks18.virtualserver.constants.VirtualServerConstant;
 import com.geeks18.virtualserver.drools.model.GenericPojoModel;
+import com.geeks18.virtualserver.service.RuleServerService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-=======
-import com.geeks18.virtualserver.constants.VirtualServerConstant;
-import com.geeks18.virtualserver.rule.dto.MainRuleDTO;
-import com.geeks18.virtualserver.service.RuleServerService;
->>>>>>> 13a3070fcfa50ff237dcc0c69bc8c3b6fbc1a84d
-
+ 
 @RestController
 @RequestMapping("/virtualServer/model")
 public class ModelGeneratorController {
@@ -88,23 +79,18 @@ public class ModelGeneratorController {
 		Workbook workbook = WorkbookFactory.create(new File(path));
 
 		Sheet sheet = workbook.getSheetAt(0);
-<<<<<<< HEAD
-		List<String> attributeList = new ArrayList<>();
+ 		List<String> attributeList = new ArrayList<>();
 		List<String> headerList = new ArrayList<>();
 		getAttributes(sheet, attributeList,headerList);
 		populateObject(attributeList,headerList);
-=======
-		Set<String> attributeList = new HashSet<>();
-		getAttributes(sheet, attributeList);
-		createJavaBeans(attributeList, sheet.getSheetName());
->>>>>>> 13a3070fcfa50ff237dcc0c69bc8c3b6fbc1a84d
-
+ 		createJavaBeans(attributeList, sheet.getSheetName());
+ 
 	//	createRulesinDb(attributeList);
 		workbook.close();
 
 	}
 
-	private void createJavaBeans(Set<String> attributeList, String objectName) {
+	private void createJavaBeans(List<String> attributeList, String objectName) {
 		try {
 
 			String source = VirtualServerConstant.SOURCE_FILE + objectName + VirtualServerConstant.SOURCE_FILE_EXT;

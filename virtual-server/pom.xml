@@ -74,8 +74,7 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.17</version>
 		</dependency>
-<<<<<<< HEAD
-		<dependency>
+ 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<version>1.16.8</version>
@@ -87,10 +86,8 @@
     <artifactId>jsonschema2pojo-core</artifactId>  
     <version>0.4.35</version>  
 </dependency>
-=======
-		
->>>>>>> 13a3070fcfa50ff237dcc0c69bc8c3b6fbc1a84d
-	</dependencies>
+ 		
+ 	</dependencies>
 
 	<build>
 		<plugins>
