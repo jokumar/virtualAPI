@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -35,10 +36,16 @@ public class RuleServerService {
 		ruleRepository.save(mainRuleModel);
 		return true;
 	}
+	public Boolean deleteAllRules() {
+		 ruleRepository.deleteAll();
+		 return true;
+	}
 
-	public Boolean updateRule(MainRuleDTO mainRuleDto) {
+	public Boolean createOrUpdate(MainRuleDTO mainRuleDto) {
 		Optional<MainRuleModel> mainRuleModel = ruleRepository.findById(mainRuleDto.getRuleId());
-
+		if(!mainRuleModel.isPresent()){
+			return createRule(mainRuleDto);
+		}
 		mainRuleModel.get().setRuleName(mainRuleDto.getRuleName());
 		mainRuleModel.get().setRuleTemplate(mainRuleDto.getRuleTemplate());
 		mainRuleModel.get().setWhenRule(mainRuleDto.getWhenRule());
@@ -47,6 +54,8 @@ public class RuleServerService {
 		
 		return true;
 	}
+	
+	
 	
 	public List<MainRuleDTO>  getAllRules() {
 		List<MainRuleDTO> list=new ArrayList<>();

@@ -41,10 +41,10 @@ public class DroolsConfiguration {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
-	public KieContainer getKieContainer() {
+	public KieContainer getKieContainer(GenericRuleModel obj) {
 	
 		if (kieContainer == null) {
-			kieContainer = createKieContainer();
+			kieContainer = createKieContainer(obj);
 		}
 		return kieContainer;
 	}
@@ -53,14 +53,14 @@ public class DroolsConfiguration {
 		this.kieContainer = null;
 	}
 
-	private KieContainer createKieContainer() {
+	private KieContainer createKieContainer(GenericRuleModel obj) {
 		KieServices kieServices = KieServices.Factory.get();
 
 		KieFileSystem kieFileSystem = kieServices.newKieFileSystem();
 		List<MainRuleDTO> list = ruleServerService.getAllRulesByTemplate("sample");
 		StringBuilder str=new StringBuilder("package com.test;\n dialect \"mvel\" \n ");
 		list.forEach(x -> {
-			str.append(applyRuleTemplate(new OrderRuleModel(), x.getWhenRule(), x.getThenRule(),x.getRuleId()));
+			str.append(applyRuleTemplate(obj, x.getWhenRule(), x.getThenRule(),x.getRuleId()));
 
 		});
 		
