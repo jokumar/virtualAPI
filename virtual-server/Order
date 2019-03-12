@@ -1,3 +1,0 @@
-package com.geeks18;import lombok.Getter;import lombok.Setter;public class Order{ public void doit() { System.out.println("******hello"); }}
-package com.geeks18;import lombok.Getter;import lombok.Setter;public class Order{ public void doit() { System.out.println("******hello"); }}
-package com.geeks18;import lombok.Getter;import lombok.Setter;public class Order{ public void doit() { System.out.println("******hello"); }}
