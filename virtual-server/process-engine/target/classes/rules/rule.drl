@@ -1,17 +1,17 @@
 package rules;
  dialect "mvel" 
  
-rule "ageRule_120"
+rule "ageRule_165"
     when
         $x :  com.geeks18.virtualserver.drools.model.OrderRequest(orderId == "10" && Count == "4" )
         $y :  com.geeks18.virtualserver.drools.model.OrderResponse();
     then
-     $y.setOrderId("10");$y.setPrice("100");$y.setStatus("TRUE");$y.setTest("Aritra");;
+     $y.setOrderId("10");$y.setPrice("100");$y.setStatus("TRUE");$y.setTest("Ari");;
 end
 
 
 
-rule "ageRule_121"
+rule "ageRule_166"
     when
         $x :  com.geeks18.virtualserver.drools.model.OrderRequest(orderId == "20" && Count == "3" )
         $y :  com.geeks18.virtualserver.drools.model.OrderResponse();
@@ -21,7 +21,7 @@ end
 
 
 
-rule "ageRule_122"
+rule "ageRule_167"
     when
         $x :  com.geeks18.virtualserver.drools.model.OrderRequest(orderId == "30" && Count == "2" )
         $y :  com.geeks18.virtualserver.drools.model.OrderResponse();

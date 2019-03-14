@@ -43,8 +43,9 @@ public class ModelGeneratorController {
 	}
 
 	private void executeBatchFile() {
-		
+		Thread commandLineThread=new Thread(()->{
 		try{
+		//ProcessBuilder processBuilder=new ProcessBuilder("C:\\Users\\joykumar\\Documents\\My POC\\Virtualized Server\\virtual-server\\process-engine\\exec.bat")
 		Process process=	Runtime.getRuntime().exec("cmd /c exec.bat",null,new File(VirtualServerConstant.SOURCE_FILE_BAT));
 		 StringBuilder output = new StringBuilder();
 		BufferedReader reader = new BufferedReader(
@@ -54,16 +55,19 @@ public class ModelGeneratorController {
         while ((line = reader.readLine()) != null) {
             output.append(line + "\n");
         }
-
+        System.out.println(output);
         int exitVal = process.waitFor();
         if (exitVal == 0) {
             System.out.println(output);
-           // System.exit(0);
+            System.exit(0);
         }
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		});
+		commandLineThread.setDaemon(true);
+		commandLineThread.start();
 	}
 	
 

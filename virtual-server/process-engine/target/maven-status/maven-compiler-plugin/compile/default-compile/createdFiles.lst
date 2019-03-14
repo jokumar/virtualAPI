@@ -1,1 +1,4 @@
+com\geeks18\rule\controller\OrderController.class
 com\geeks18\rule\DroolsTest.class
+com\geeks18\virtualserver\drools\model\OrderResponse.class
+com\geeks18\virtualserver\drools\model\OrderRequest.class

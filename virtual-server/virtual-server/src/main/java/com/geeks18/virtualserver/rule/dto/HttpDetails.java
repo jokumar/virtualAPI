@@ -1,7 +1,7 @@
 package com.geeks18.virtualserver.rule.dto;
 
 public class HttpDetails {
-
+	
 	public String api;
 	public String methodType;
 	public String requestType;
