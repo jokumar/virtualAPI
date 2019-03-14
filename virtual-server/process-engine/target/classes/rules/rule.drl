@@ -1,0 +1,32 @@
+package rules;
+ dialect "mvel" 
+ 
+rule "ageRule_120"
+    when
+        $x :  com.geeks18.virtualserver.drools.model.OrderRequest(orderId == "10" && Count == "4" )
+        $y :  com.geeks18.virtualserver.drools.model.OrderResponse();
+    then
+     $y.setOrderId("10");$y.setPrice("100");$y.setStatus("TRUE");$y.setTest("Aritra");;
+end
+
+
+
+rule "ageRule_121"
+    when
+        $x :  com.geeks18.virtualserver.drools.model.OrderRequest(orderId == "20" && Count == "3" )
+        $y :  com.geeks18.virtualserver.drools.model.OrderResponse();
+    then
+     $y.setOrderId("20");$y.setPrice("200");$y.setStatus("FALSE");$y.setTest("Joy");;
+end
+
+
+
+rule "ageRule_122"
+    when
+        $x :  com.geeks18.virtualserver.drools.model.OrderRequest(orderId == "30" && Count == "2" )
+        $y :  com.geeks18.virtualserver.drools.model.OrderResponse();
+    then
+     $y.setOrderId("30");$y.setPrice("300");$y.setStatus("TRUE");$y.setTest("Rana");;
+end
+
+

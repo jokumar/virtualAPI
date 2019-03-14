@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.geeks18.virtualserver.constants.VirtualServerConstant;
-import com.geeks18.virtualserver.drools.model.GenericRuleModel;
+import com.geeks18.virtualserver.rule.dto.HttpDetails;
 import com.geeks18.virtualserver.rule.dto.MainRuleDTO;
 import com.geeks18.virtualserver.service.RuleServerService;
 
@@ -35,12 +35,13 @@ public class DroolsConfiguration {
 
 
 
-	public void createDrl(String requestName,String responseName) throws IOException {
-
+	public void createDrl(HttpDetails httpDetails) throws IOException {
+		String fullRequestName=httpDetails.getPackageName()+httpDetails.getRequestName();
+		String fullResponseName=httpDetails.getPackageName()+httpDetails.getResponseName();
 		List<MainRuleDTO> list = ruleServerService.getAllRulesByTemplate("sample");
-		StringBuilder str=new StringBuilder("package com.test;\n dialect \"mvel\" \n ");
+		StringBuilder str=new StringBuilder("package rules;\n dialect \"mvel\" \n ");
 		list.forEach(x -> {
-			str.append(applyRuleTemplate(requestName,responseName, x.getWhenRule(), x.getThenRule(),x.getRuleId()));
+			str.append(applyRuleTemplate(fullRequestName,fullResponseName, x.getWhenRule(), x.getThenRule(),x.getRuleId()));
 
 		});
 		String source=VirtualServerConstant.SOURCE_FILE_DRL + VirtualServerConstant.DRL_FILE_NAME ;
@@ -49,11 +50,6 @@ public class DroolsConfiguration {
 		writer.write(str.toString());
 		writer.flush();
 		writer.close();
-		/*kieFileSystem.write("src/main/resources/rule.drl", str.toString());
-		KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem);
-		kieBuilder.buildAll();
-		KieModule kieModule = kieBuilder.getKieModule();
-		return kieServices.newKieContainer(kieModule.getReleaseId());*/
 	}
 
 	

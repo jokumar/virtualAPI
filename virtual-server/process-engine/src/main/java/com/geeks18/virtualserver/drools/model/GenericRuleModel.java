@@ -1,15 +1,8 @@
 package com.geeks18.virtualserver.drools.model;
 
-public abstract class GenericRuleModel {
-	
-	public String status;
+import java.io.Serializable;
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
+public abstract class GenericRuleModel implements Serializable {
 	
+		
 }

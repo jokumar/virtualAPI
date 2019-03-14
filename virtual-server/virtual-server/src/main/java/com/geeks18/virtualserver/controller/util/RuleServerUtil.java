@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.geeks18.virtualserver.constants.VirtualServerConstant;
 import com.geeks18.virtualserver.drools.DroolsConfiguration;
 import com.geeks18.virtualserver.drools.model.GenericPojoModel;
+import com.geeks18.virtualserver.rule.dto.HttpDetails;
 import com.geeks18.virtualserver.rule.dto.MainRuleDTO;
 import com.geeks18.virtualserver.service.RuleServerService;
 import com.google.gson.Gson;
@@ -47,23 +48,71 @@ public class RuleServerUtil {
 
 		List<String> requestAttributeKeyList = new ArrayList<>();
 		List<String> responseAttributeKeyList = new ArrayList<>();
+		
 		List<HashMap<String, String>> requestListMap = new ArrayList<>();
 		List<HashMap<String, String>> responseListmap = new ArrayList<>();
+		
 		List<String> whenList=new ArrayList<>();
 		List<String> thenList=new ArrayList<>();
-		getAttributes(sheet, requestAttributeKeyList, responseAttributeKeyList, requestListMap, responseListmap,whenList,thenList);
-		populateObject(requestListMap, responseListmap);
-		populateDatabase(whenList, thenList);
-		String requestName=sheet.getSheetName() + "Request";//TODO
-		String responseName=sheet.getSheetName() + "Response";
-		String packagename="com.geeks18.virtualserver.drools.model.";//TODO 
-		createJavaBeans(requestAttributeKeyList, requestName);
-		createJavaBeans(responseAttributeKeyList,responseName );
 		
-		droolsConfiguration.createDrl(packagename+requestName,packagename+responseName);
+		HttpDetails httpDetails=new HttpDetails();
+		
+		getAttributes(sheet, requestAttributeKeyList, responseAttributeKeyList, requestListMap, responseListmap,whenList,thenList,httpDetails);
+		
+		populateObject(requestListMap, responseListmap);
+		
+		populateDatabase(whenList, thenList);
+		
+		httpDetails.setRequestName(sheet.getSheetName() + "Request");
+		httpDetails.setResponseName(sheet.getSheetName() + "Response");
+		httpDetails.setPackageName("com.geeks18.virtualserver.drools.model.");
+		
+		createController(httpDetails,sheet.getSheetName());
+		
+		createJavaBeans(requestAttributeKeyList, httpDetails.getRequestName());
+		createJavaBeans(responseAttributeKeyList,httpDetails.getResponseName() );
+		
+		droolsConfiguration.createDrl(httpDetails);
 		
 		workbook.close();
 
+	}
+
+	private void createController(HttpDetails httpDetails,String name) {
+		try {
+
+			String source = VirtualServerConstant.SOURCE_FILE_CONTROLLER + name+"Controller" + VirtualServerConstant.SOURCE_FILE_EXT;
+			String className=name+"Controller";
+			File sourceFile = new File(source);
+			FileWriter writer = new FileWriter(sourceFile);
+			writer.write("//This is a Auto Generated Class \n");
+
+			writer.write("package com.geeks18.rule.controller;\n");
+
+			StringBuilder sourceBuilder = new StringBuilder();
+			sourceBuilder.append("import org.springframework.web.bind.annotation.RequestMapping;  \n")
+			.append("import org.springframework.web.bind.annotation.RestController;  \n")
+			.append("import com.geeks18.rule.controller.AbstractRestController;  \n")
+			.append("import ").append(httpDetails.getPackageName()).append(httpDetails.getRequestName()).append("; \n")
+			.append("import ").append(httpDetails.getPackageName()).append(httpDetails.getResponseName()).append("; \n")
+			.append("@RestController  \n")
+			.append("@RequestMapping(\""+httpDetails.getApi()+"\") \n")
+			.append("public class "+className+" extends AbstractRestController<"+httpDetails.getRequestName()+","+httpDetails.getResponseName()+">{ \n")
+			.append("public ").append(className).append("(){\n")
+			.append("super(new "+httpDetails.getResponseName()+"()); \n")
+			.append("} \n")
+			.append("} \n");
+			
+			writer.write(sourceBuilder.toString());
+			
+			
+			writer.flush();
+			writer.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void populateDatabase(List<String> whenList,
@@ -146,7 +195,7 @@ public class RuleServerUtil {
 	}
 
 	public void getAttributes(Sheet sheet, List<String> requestAttributeKeyList, List<String> responseAttributeKeyList,
-			List<HashMap<String, String>> requestList, List<HashMap<String, String>> responseList,List<String> whenList,List<String> thenList) {
+			List<HashMap<String, String>> requestList, List<HashMap<String, String>> responseList,List<String> whenList,List<String> thenList,HttpDetails httpDetails) {
 		DataFormatter dataFormatter = new DataFormatter();
 
 		int requestAttributeCount = 0;
@@ -158,14 +207,25 @@ public class RuleServerUtil {
 			StringBuilder thenBuilder=new StringBuilder();
 			for (Cell cell : row) {
 				String cellValue = dataFormatter.formatCellValue(cell);
-				if (cell.getRowIndex() == 0) {
+				if (cell.getRowIndex() == VirtualServerConstant.EXCEL_ROW_0 && cell.getColumnIndex() == VirtualServerConstant.EXCEL_COL_1){
+					httpDetails.setApi(cellValue);
+				}else if (cell.getRowIndex() == VirtualServerConstant.EXCEL_ROW_1 && cell.getColumnIndex() == VirtualServerConstant.EXCEL_COL_1){
+					httpDetails.setMethodType(cellValue);
+				}
+				else if (cell.getRowIndex() == VirtualServerConstant.EXCEL_ROW_2 && cell.getColumnIndex() == VirtualServerConstant.EXCEL_COL_1){
+					httpDetails.setRequestType(cellValue);
+				}
+				else if (cell.getRowIndex() == VirtualServerConstant.EXCEL_ROW_3 && cell.getColumnIndex() == VirtualServerConstant.EXCEL_COL_1){
+					httpDetails.setResponseType(cellValue);
+				}
+				else if (cell.getRowIndex() == VirtualServerConstant.EXCEL_ROW_4) {
 					if (VirtualServerConstant.EXCEL_REQUEST.equalsIgnoreCase(cellValue)) {
 						requestAttributeCount++;
 					} else if (VirtualServerConstant.EXCEL_RESPONSE.equalsIgnoreCase(cellValue)) {
 						responseAttributeCount++;
 					}
 					continue;
-				} else if (cell.getRowIndex() == 1) {
+				} else if (cell.getRowIndex() == VirtualServerConstant.EXCEL_ROW_5) {
 					if (cell.getColumnIndex() < requestAttributeCount) {
 						requestAttributeKeyList.add(cellValue);
 					} else if (cell.getColumnIndex() < requestAttributeCount + responseAttributeCount) {

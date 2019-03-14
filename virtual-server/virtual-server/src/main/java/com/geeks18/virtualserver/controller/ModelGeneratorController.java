@@ -1,5 +1,9 @@
 package com.geeks18.virtualserver.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.geeks18.virtualserver.constants.VirtualServerConstant;
 import com.geeks18.virtualserver.controller.util.RuleServerUtil;
  
 @RestController
@@ -30,13 +35,37 @@ public class ModelGeneratorController {
 			String path = templatePath.substring(0, templatePath.lastIndexOf("/")) + "/" + file.getOriginalFilename();
 			ruleServerUtil.saveFile(file.getInputStream(), path);
 			ruleServerUtil.importFile(path);
-			
+			executeBatchFile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return file.getOriginalFilename();
 	}
 
+	private void executeBatchFile() {
+		
+		try{
+		Process process=	Runtime.getRuntime().exec("cmd /c exec.bat",null,new File(VirtualServerConstant.SOURCE_FILE_BAT));
+		 StringBuilder output = new StringBuilder();
+		BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream()));
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+            output.append(line + "\n");
+        }
+
+        int exitVal = process.waitFor();
+        if (exitVal == 0) {
+            System.out.println(output);
+           // System.exit(0);
+        }
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 
 	
 }
