@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 	@Configuration
 	@SpringBootApplication
-	public class DroolsTest {
+	public class ProcessApp {
 
 		public static void main(String[] args) {
 			SpringApplication.run(DroolsTest.class, args);
