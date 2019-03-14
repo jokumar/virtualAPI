@@ -2,7 +2,6 @@ package com.geeks18.virtualserver.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
@@ -17,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.geeks18.virtualserver.constants.VirtualServerConstant;
 import com.geeks18.virtualserver.controller.util.RuleServerUtil;
+import com.geeks18.virtualserver.rule.dto.ApiDetailsDTO;
  
 @RestController
 @RequestMapping("/virtualServer/model")
@@ -27,19 +27,24 @@ public class ModelGeneratorController {
 	
 	
 	@RequestMapping(value = "upload", consumes = { MimeTypeUtils.ALL_VALUE })
-	public String upload(@RequestParam(value = "file") MultipartFile file, HttpServletRequest request) {
+	public ApiDetailsDTO upload(@RequestParam(value = "file") MultipartFile file, HttpServletRequest request) {
+		ApiDetailsDTO apiDetailsDTO=new ApiDetailsDTO();
 		try {
+			
 			URL url = Thread.currentThread().getContextClassLoader().getResource("template.drt");
 
 			String templatePath = url.toURI().getPath();
 			String path = templatePath.substring(0, templatePath.lastIndexOf("/")) + "/" + file.getOriginalFilename();
 			ruleServerUtil.saveFile(file.getInputStream(), path);
-			ruleServerUtil.importFile(path);
+			ruleServerUtil.importFile(path,apiDetailsDTO);
 			executeBatchFile();
+			apiDetailsDTO.setStatus(true);
+			apiDetailsDTO.setMessage("Your API has been successfully created . It should be accessible shortly ");
 		} catch (Exception e) {
+			apiDetailsDTO.setStatus(false);
 			e.printStackTrace();
 		}
-		return file.getOriginalFilename();
+		return apiDetailsDTO;
 	}
 
 	private void executeBatchFile() {

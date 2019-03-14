@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.geeks18.virtualserver.constants.VirtualServerConstant;
 import com.geeks18.virtualserver.drools.DroolsConfiguration;
 import com.geeks18.virtualserver.drools.model.GenericPojoModel;
+import com.geeks18.virtualserver.rule.dto.ApiDetailsDTO;
 import com.geeks18.virtualserver.rule.dto.HttpDetails;
 import com.geeks18.virtualserver.rule.dto.MainRuleDTO;
 import com.geeks18.virtualserver.service.RuleServerService;
@@ -41,7 +42,7 @@ public class RuleServerUtil {
 	
 	@Resource 
 	DroolsConfiguration droolsConfiguration;
-	public void importFile(String path) throws EncryptedDocumentException, InvalidFormatException, IOException {
+	public void importFile(String path,ApiDetailsDTO apiDetailsDTO) throws EncryptedDocumentException, InvalidFormatException, IOException {
 		Workbook workbook = WorkbookFactory.create(new File(path));
 
 		Sheet sheet = workbook.getSheetAt(0);
@@ -75,7 +76,8 @@ public class RuleServerUtil {
 		droolsConfiguration.createDrl(httpDetails);
 		
 		workbook.close();
-
+		apiDetailsDTO.setUrl(httpDetails.getApi());
+		apiDetailsDTO.setMethodType(httpDetails.getMethodType());
 	}
 
 	private void createController(HttpDetails httpDetails,String name) {
