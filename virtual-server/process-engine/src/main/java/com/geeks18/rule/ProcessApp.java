@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 	public class ProcessApp {
 
 		public static void main(String[] args) {
-			SpringApplication.run(DroolsTest.class, args);
+			SpringApplication.run(ProcessApp.class, args);
 		}
 		@Bean
 		public KieSession kieSession(){
